@@ -1,0 +1,42 @@
+defaults:
+  - model: lcnn
+  - writer: wandb
+  - metrics: antispoof
+  - datasets: asvspoof_one_batch
+  - dataloader: asvspoof
+  - transforms: none
+  - _self_
+
+data_dir: ???
+protocol_dir: ???
+
+dataloader:
+  batch_size: 8
+  num_workers: 0
+  persistent_workers: false
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 3e-4
+lr_scheduler:
+  _target_: torch.optim.lr_scheduler.StepLR
+  step_size: 10000
+  gamma: 1.0
+loss_function:
+  _target_: src.loss.CrossEntropyLoss
+trainer:
+  log_step: 1
+  n_epochs: 200
+  epoch_len: 1
+  device_tensors: [data_object, labels]
+  resume_from: null
+  device: auto
+  override: true
+  monitor: "min val_EER"
+  save_period: 200
+  early_stop: 200
+  save_dir: saved
+  seed: 1
+writer:
+  project_name: lcnn-asvspoof2019-la
+  run_name: one-batch-test
+  mode: offline

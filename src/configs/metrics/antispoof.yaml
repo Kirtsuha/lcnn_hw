@@ -1,0 +1,14 @@
+train:
+  - _target_: src.metrics.ClassificationAccuracy
+    metric:
+      _target_: torchmetrics.classification.BinaryAccuracy
+    device: ${trainer.device}
+    name: Accuracy
+inference:
+  - _target_: src.metrics.ClassificationAccuracy
+    metric:
+      _target_: torchmetrics.classification.BinaryAccuracy
+    device: ${trainer.device}
+    name: Accuracy
+  - _target_: src.metrics.EqualErrorRate
+    name: EER

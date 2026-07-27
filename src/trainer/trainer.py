@@ -52,7 +52,10 @@ class Trainer(BaseTrainer):
             metrics.update(loss_name, batch[loss_name].item())
 
         for met in metric_funcs:
-            metrics.update(met.name, met(**batch))
+            if getattr(met, "aggregate", False):
+                met.update(**batch)
+            else:
+                metrics.update(met.name, met(**batch))
         return batch
 
     def _log_batch(self, batch_idx, batch, mode="train"):
@@ -67,8 +70,7 @@ class Trainer(BaseTrainer):
             mode (str): train or inference. Defines which logging
                 rules to apply.
         """
-        # method to log data from you batch
-        # such as audio, text or images, for example
+        # Add task-specific batch visualizations here when needed.
 
         # logging scheme might be different for different partitions
         if mode == "train":  # the method is called only every self.log_step steps
@@ -77,3 +79,17 @@ class Trainer(BaseTrainer):
         else:
             # Log Stuff
             pass
+
+    def _evaluation_epoch(self, epoch, part, dataloader):
+        for metric in self.metrics["inference"]:
+            if getattr(metric, "aggregate", False):
+                metric.reset()
+        logs = super()._evaluation_epoch(epoch, part, dataloader)
+        for metric in self.metrics["inference"]:
+            if getattr(metric, "aggregate", False):
+                value = metric.compute()
+                self.evaluation_metrics.update(metric.name, value)
+                logs[metric.name] = value
+                if self.writer is not None:
+                    self.writer.add_scalar(metric.name, value)
+        return logs

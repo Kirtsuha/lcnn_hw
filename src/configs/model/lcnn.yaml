@@ -1,0 +1,5 @@
+_target_: src.model.LCNN
+input_frequency_bins: 257
+input_frames: 750
+dropout: 0.75
+num_classes: 2

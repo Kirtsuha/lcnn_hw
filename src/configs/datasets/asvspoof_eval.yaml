@@ -1,0 +1,6 @@
+eval:
+  _target_: src.datasets.ASVspoofDataset
+  data_dir: ${data_dir}
+  protocol_path: ${protocol_dir}/ASVspoof2019.LA.cm.eval.trl.txt
+  split: eval
+  random_crop: false

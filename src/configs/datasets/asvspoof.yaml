@@ -1,0 +1,12 @@
+train:
+  _target_: src.datasets.ASVspoofDataset
+  data_dir: ${data_dir}
+  protocol_path: ${protocol_dir}/ASVspoof2019.LA.cm.train.trn.txt
+  split: train
+  random_crop: true
+val:
+  _target_: src.datasets.ASVspoofDataset
+  data_dir: ${data_dir}
+  protocol_path: ${protocol_dir}/ASVspoof2019.LA.cm.dev.trl.txt
+  split: dev
+  random_crop: false

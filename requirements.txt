@@ -1,14 +1,15 @@
 torch==2.2.0
-torchvision==0.17.0
+torchaudio==2.2.0
 torchmetrics
 numpy==1.26.4
+soundfile
 tqdm
 matplotlib
 pandas
 wandb
-comet_ml
 hydra-core
 
 black
 isort
 pre-commit
+pytest

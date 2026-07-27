@@ -28,7 +28,7 @@ def move_batch_transforms_to_device(batch_transforms, device):
 
     Batch transforms are required to be an instance of nn.Module.
     If several transforms are applied sequentially, use nn.Sequential
-    in the config (not torchvision.Compose).
+    in the config (for example, nn.Sequential).
 
     Args:
         batch_transforms (dict[Callable] | None): transforms that

@@ -1,0 +1,41 @@
+defaults:
+  - model: lcnn
+  - writer: wandb
+  - metrics: antispoof
+  - datasets: asvspoof
+  - dataloader: asvspoof
+  - transforms: none
+  - _self_
+
+data_dir: ???
+protocol_dir: ???
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 3e-4
+  betas: [0.9, 0.999]
+  eps: 1e-8
+lr_scheduler:
+  _target_: torch.optim.lr_scheduler.StepLR
+  step_size: 4000
+  gamma: 0.5
+loss_function:
+  _target_: src.loss.CrossEntropyLoss
+trainer:
+  log_step: 50
+  n_epochs: 30
+  epoch_len: 400
+  device_tensors: [data_object, labels]
+  resume_from: null
+  device: auto
+  override: false
+  monitor: "min val_EER"
+  save_period: 5
+  early_stop: 15
+  save_dir: saved
+  seed: 1
+  max_grad_norm: 5.0
+
+writer:
+  project_name: lcnn-asvspoof2019-la
+  run_name: lcnn-stft-ce

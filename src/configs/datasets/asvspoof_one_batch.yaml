@@ -1,0 +1,14 @@
+train:
+  _target_: src.datasets.ASVspoofDataset
+  data_dir: ${data_dir}
+  protocol_path: ${protocol_dir}/ASVspoof2019.LA.cm.dev.trl.txt
+  split: dev
+  random_crop: false
+  limit_per_class: 4
+val:
+  _target_: src.datasets.ASVspoofDataset
+  data_dir: ${data_dir}
+  protocol_path: ${protocol_dir}/ASVspoof2019.LA.cm.dev.trl.txt
+  split: dev
+  random_crop: false
+  limit_per_class: 4
