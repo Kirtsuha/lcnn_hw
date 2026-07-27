@@ -16,16 +16,11 @@ def compute_eer(bonafide_scores, spoof_scores):
     )
     order = np.argsort(scores, kind="mergesort")
     labels = labels[order]
-    false_rejections = np.concatenate(
-        ([0.0], np.cumsum(labels) / bonafide_scores.size)
-    )
+    false_rejections = np.concatenate(([0.0], np.cumsum(labels) / bonafide_scores.size))
     false_acceptances = np.concatenate(
         (
             [1.0],
-            (
-                spoof_scores.size
-                - (np.arange(1, scores.size + 1) - np.cumsum(labels))
-            )
+            (spoof_scores.size - (np.arange(1, scores.size + 1) - np.cumsum(labels)))
             / spoof_scores.size,
         )
     )

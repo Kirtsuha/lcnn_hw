@@ -34,7 +34,5 @@ def test_class_balanced_limit(tmp_path: Path):
         ),
         encoding="utf-8",
     )
-    dataset = ASVspoofDataset(
-        tmp_path, protocol, split="train", limit_per_class=1
-    )
+    dataset = ASVspoofDataset(tmp_path, protocol, split="train", limit_per_class=1)
     assert sorted(item["label"] for item in dataset.index) == [0, 1]
