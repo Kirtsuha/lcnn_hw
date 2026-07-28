@@ -9,6 +9,7 @@ defaults:
 
 data_dir: ???
 protocol_dir: ???
+train_sampling: natural
 
 dataloader:
   batch_size: 8

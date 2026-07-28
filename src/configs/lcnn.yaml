@@ -9,6 +9,7 @@ defaults:
 
 data_dir: ???
 protocol_dir: ???
+train_sampling: natural
 
 optimizer:
   _target_: torch.optim.Adam

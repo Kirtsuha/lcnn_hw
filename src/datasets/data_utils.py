@@ -1,6 +1,9 @@
+from collections import Counter
 from itertools import repeat
 
+import torch
 from hydra.utils import instantiate
+from torch.utils.data import WeightedRandomSampler
 
 from src.datasets.collate import collate_fn
 from src.utils.init_utils import set_worker_seed
@@ -43,6 +46,29 @@ def move_batch_transforms_to_device(batch_transforms, device):
                 transforms[transform_name] = transforms[transform_name].to(device)
 
 
+def build_balanced_sampler(dataset):
+    """Sample every class with equal expected probability.
+
+    The ASVspoof train protocol is strongly imbalanced. Assigning each record
+    the inverse frequency of its class makes the total sampling weight equal
+    for every class while preserving the original epoch length.
+    """
+    labels = [record["label"] for record in dataset.index]
+    class_counts = Counter(labels)
+    if len(class_counts) < 2:
+        raise ValueError("Balanced sampling requires at least two classes")
+
+    sample_weights = torch.tensor(
+        [1.0 / class_counts[label] for label in labels],
+        dtype=torch.double,
+    )
+    return WeightedRandomSampler(
+        weights=sample_weights,
+        num_samples=len(sample_weights),
+        replacement=True,
+    )
+
+
 def get_dataloaders(config, device):
     """
     Create dataloaders for each of the dataset partitions.
@@ -69,6 +95,17 @@ def get_dataloaders(config, device):
     dataloaders = {}
     for dataset_partition in config.datasets.keys():
         dataset = datasets[dataset_partition]
+        sampler = None
+        shuffle = dataset_partition == "train"
+        if dataset_partition == "train":
+            sampling_strategy = config.get("train_sampling", "natural")
+            if sampling_strategy == "balanced":
+                sampler = build_balanced_sampler(dataset)
+                shuffle = False
+            elif sampling_strategy != "natural":
+                raise ValueError(
+                    f"Unknown train sampling strategy: {sampling_strategy!r}"
+                )
 
         assert config.dataloader.batch_size <= len(dataset), (
             f"The batch size ({config.dataloader.batch_size}) cannot "
@@ -80,7 +117,8 @@ def get_dataloaders(config, device):
             dataset=dataset,
             collate_fn=collate_fn,
             drop_last=(dataset_partition == "train"),
-            shuffle=(dataset_partition == "train"),
+            shuffle=shuffle,
+            sampler=sampler,
             worker_init_fn=set_worker_seed,
         )
         dataloaders[dataset_partition] = partition_dataloader
