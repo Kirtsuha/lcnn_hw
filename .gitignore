@@ -45,6 +45,7 @@ nosetests.xml
 coverage.xml
 *.cover
 .hypothesis/
+.pytest_cache/
 
 # Translations
 *.mo
@@ -109,8 +110,19 @@ wandb/
 outputs/
 *.csv
 !reports/*.csv
+!homework-report/wandb_history_seed1.csv
 
 # editor, os cache directory
 .vscode/
 .idea/
+.obsidian/
+.temp/
+.local-archive/
+submission/
 __MACOSX/
+
+# local credentials, model artifacts, course data, and console output
+SECRET_DONT_COMMIT
+model/
+logs
+ASVspoof2019.LA.cm.eval.trl.txt
